@@ -1,8 +1,8 @@
 const https = require('https');
 const config = require('../config/config.json');
-const cacheHelper = require('../helpers/cacheHelper');
+const cacheHelper = require('../helpers/cache.helper');
 
-const makeHttpGetRequest = (currencyCode,date) => {
+const getHistoricalExchangeRate = (currencyCode, date) => {
     return new Promise((resolve, reject) => {
         https.get(`https://api.fastforex.io/historical?date=${date}&from=${currencyCode}&api_key=${config.EXCHANGE_RATE_API_KEY}`, res => {
             let data = [];
@@ -23,4 +23,4 @@ const makeHttpGetRequest = (currencyCode,date) => {
     });
 }
 
-module.exports = { makeHttpGetRequest };
+module.exports = { getHistoricalExchangeRate };

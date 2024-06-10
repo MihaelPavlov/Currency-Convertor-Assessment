@@ -1,4 +1,4 @@
-const questionController = require('./controllers/questionController');
+const questionController = require('./controllers/question.controller');
 
 questionController.askQuestions();
 

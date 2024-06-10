@@ -1,17 +1,15 @@
 const NodeCache = require('node-cache');
-const cache = new NodeCache();
+const cache = new NodeCache({ stdTTL: 100, checkperiod: 120 });
 
 const getCachedData = (key) => {
     const inMemoryData = cache.get(key);
     if (cache.has(key)) {
-        console.log('Cache hit (in-memory):', key);
         return inMemoryData;
     }
-    console.log('No Cache hit');
     return null;
 }
 
-const setCacheData = (key, data) => {
+const setCacheData = async (key, data) => {
     cache.set(key, data);
 }
 

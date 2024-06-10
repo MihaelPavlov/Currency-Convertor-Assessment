@@ -9,8 +9,9 @@ const ERROR_INVALID_CURRENCY_CODE = 'Please enter a valid currency code';
 const ERROR_INVALID_DATE = `Invalid date. Please enter a valid date in format:`;
 
 const isAmountValid = (amount) => {
-    const splittedAmount = amount.toString().split(".");
-    if (!splittedAmount[1] || splittedAmount[1].length != 2) {
+    const amountRegex = /^\d+\.\d{2}$/;
+    
+    if (!amountRegex.test(amount)) {
         logger.info(ERROR_INVALID_AMOUNT);
         return false;
     }
@@ -47,7 +48,8 @@ const isEnding = async (isEnding) => {
 const isValidDate = (date) => {
     const dateFormat = 'YYYY-MM-DD';
     if (moment(date, dateFormat, true).isValid()) {
-        return date;
+        questions[DATE_QUESTION].result = date;
+        return true;
     } else {
         logger.info(chalk.red(`${ERROR_INVALID_DATE} ${chalk.blue(dateFormat)}`));
         return false;

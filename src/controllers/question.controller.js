@@ -3,6 +3,26 @@ const { DATE_QUESTION, AMOUNT_QUESTION, BASE_CURRENCY_QUESTION, TARGET_CURRENCY_
 const { exportToJson } = require('../helpers/json.helper');
 const logger = require('../utilities/logger.utility');
 
+const askQuestions = async () => {
+    const questionKeys = Object.keys(questions).filter(questionKey => questionKey !== DATE_QUESTION);
+
+    for (let i = 0; i < questionKeys.length; i++) {
+        const key = questionKeys[i];
+        const result = await handleAnswer(key);
+        if (result === null) return;
+
+        if (i === questionKeys.length - 1) {
+            if (questionKeys.map(x => questions[x].result).filter(x => x != null).length != questionKeys.length) {
+                logger.warn("something went wrong");
+            } else {
+                processResults();
+                i = -1; // Restart the loop
+            }
+        }
+    }
+    readlineUtil.rl.close();
+};
+
 const handleAnswer = async (key) => {
     let answer = await readlineUtil.askQuestion(questions[key].question);
     let endingDetected = await isEnding(answer);
@@ -43,23 +63,11 @@ const processResults = () => {
     logger.info(`${amount} ${baseCurrency} is ${convertedAmount} ${targetCurrency}`);
 };
 
-const askQuestions = async () => {
-    const questionKeys = Object.keys(questions);
-    for (let i = 0; i < questionKeys.length; i++) {
-        const key = questionKeys[i];
-        const result = await handleAnswer(key);
-        if (result === null) return;
-
-        if (i === questionKeys.length - 1) {
-            if (questionKeys.map(x => questions[x].result).filter(x => x != null).length != questionKeys.length) {
-                logger.warn("something went wrong");
-            } else {
-                processResults();
-                i = -1; // Restart the loop
-            }
-        }
+const validateAppArgs = (date) => {
+    const isValidDate = questions[DATE_QUESTION].validateFunc(date);
+    if (!isValidDate) {
+        process.exit();
     }
-    readlineUtil.rl.close();
-};
+}
 
-module.exports = { askQuestions };
+module.exports = { askQuestions, validateAppArgs };
